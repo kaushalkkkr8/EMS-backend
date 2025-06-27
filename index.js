@@ -1,6 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const cors = require ('cors')
+const cors = require("cors");
 const { connection } = require("./db.connect");
 const app = express();
 dotenv.config();
@@ -11,22 +11,15 @@ const engineer = require("./Routes/engineerRoute");
 const project = require("./Routes/projectRoute");
 const assignment = require("./Routes/assignmentRoutes");
 
-
-app.use(cors({
-  origin: ['http://localhost:5173',"https://ems-frontend-liart.vercel.app/"],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}))
+app.use(cors());
 app.get("/", (req, res) => {
   res.send("Hello! All Good");
 });
-
 
 app.use("/auth", auth);
 app.use("/engineers", engineer);
 app.use("/projects", project);
 app.use("/assignments", assignment);
-
 
 const PORT = process.env.PORT || 3000;
 

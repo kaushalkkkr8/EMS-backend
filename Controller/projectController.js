@@ -81,10 +81,38 @@ const createProject = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server error", err });
   }
 };
+const updateProject = async (req, res) => {
+  try {
+    const token = req?.headers?.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ success: false, message: "Please send token" });
+
+    const user = await decodeJwt(token);
+    if (!user) return res.status(401).json({ success: false, message: "Invalid token" });
+
+    const projectId = req.params.id;
+    const updateData = req.body;
+
+    const updatedProject = await ProjectModel.findByIdAndUpdate(
+      projectId,
+      { ...updateData, managerId: user._id },
+      { new: true }
+    );
+
+    if (!updatedProject) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Project updated", project: updatedProject });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Internal Server Error", err });
+  }
+};
 
 module.exports = {
   getAllProjects,
   getProjectById,
   createProject,
-  getProjectByEngineerId
+  getProjectByEngineerId,
+  updateProject
 };
