@@ -10,7 +10,7 @@ const getAllAssignments = async (req, res) => {
     const user = await decodeJwt(token);
     if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
 
-    const assignments = await AssignmentModel.find().populate("engineerId", "name email skills").populate("projectId", "name status");
+    const assignments = await AssignmentModel.find().populate("engineerId", "name email skills").populate("projectId", "name status teamSize");
 
     res.status(200).json(assignments);
   } catch (err) {

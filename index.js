@@ -13,7 +13,7 @@ const assignment = require("./Routes/assignmentRoutes");
 
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173',"https://ems-frontend-liart.vercel.app/"],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }))
