@@ -87,6 +87,7 @@ const updateProject = async (req, res) => {
 
     const projectId = req.params.id;
     const updateData = req.body;
+    
 
     const updatedProject = await ProjectModel.findByIdAndUpdate(projectId, { ...updateData, managerId: user._id }, { new: true });
 

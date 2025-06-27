@@ -29,8 +29,11 @@ const createAssignment = async (req, res) => {
     if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
 
     const { engineerId, projectId, allocationPercentage, startDate, endDate, role } = req.body;
+    console.log({ engineerId, projectId, allocationPercentage, startDate, endDate, role });
     
     const engineer = await UserModel.findById(engineerId);
+    console.log({engineer});
+    
 
     if (!engineer || engineer?.role !== "engineer") {
       return res.status(404).json({ message: "Engineer not found" });
@@ -39,12 +42,15 @@ const createAssignment = async (req, res) => {
     // Calculate total allocation
     const assignments = await AssignmentModel.find({ engineerId });
     const totalAllocated = assignments.reduce((sum, a) => sum + a.allocationPercentage, 0);
+   
+    
 
     if (totalAllocated + allocationPercentage > engineer.maxCapacity) {
       return res.status(400).json({ message: "Engineer is overallocated" });
     }
 
     const assignment = new AssignmentModel({ engineerId, projectId, allocationPercentage, startDate, endDate, role });
+     console.log({assignment});
 
     await assignment.save();
     res.status(201).json({ message: "Assignment created", assignment });
