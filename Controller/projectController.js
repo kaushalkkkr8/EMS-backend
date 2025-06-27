@@ -1,3 +1,4 @@
+const AssignmentModel = require("../Model/assingnmentModel");
 const ProjectModel = require("../Model/projectModel");
 const { decodeJwt } = require("../utility/verifyToken");
 
@@ -36,6 +37,27 @@ const getProjectById = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server error", err });
   }
 };
+const getProjectByEngineerId = async (req, res) => {
+  try {
+ const token = req?.headers?.authorization?.split(" ")[1];
+
+
+    if (!token) return res.status(401).json({ success: false, message: "Please Send token" });
+    const user = await decodeJwt(token);
+    if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
+    
+    
+    const project =  await AssignmentModel.find({ engineerId:user?._id }).populate("projectId");
+
+    if (!project) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.status(200).json({success:true,project});
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal Server error", err });
+  }
+};
 
 // POST create a new project
 const createProject = async (req, res) => {
@@ -49,7 +71,7 @@ const createProject = async (req, res) => {
 
     const { name, description, startDate, endDate, requiredSkills, teamSize, status } = req.body;
 
-    const project = new ProjectModel({ name, description, startDate, endDate, requiredSkills, teamSize, status, managerId: "685a89e06b8756fcd54beace" });
+    const project = new ProjectModel({ name, description, startDate, endDate, requiredSkills, teamSize, status, managerId:user?._id });
 
     await project.save();
     res.status(201).json({ success: true, message: "Project created", project });
@@ -64,4 +86,5 @@ module.exports = {
   getAllProjects,
   getProjectById,
   createProject,
+  getProjectByEngineerId
 };

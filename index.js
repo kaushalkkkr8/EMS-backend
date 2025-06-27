@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
 
 
 app.use("/auth", auth);
-app.use("/engineer", engineer);
+app.use("/engineers", engineer);
 app.use("/projects", project);
 app.use("/assignments", assignment);
 

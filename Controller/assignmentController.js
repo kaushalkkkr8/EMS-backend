@@ -1,5 +1,6 @@
 const AssignmentModel = require("../Model/assingnmentModel");
 const UserModel = require("../Model/userModel");
+const { decodeJwt } = require("../utility/verifyToken");
 
 const getAllAssignments = async (req, res) => {
   try {
@@ -21,15 +22,15 @@ const getAllAssignments = async (req, res) => {
 const createAssignment = async (req, res) => {
   try {
     const token = req?.headers?.authorization?.split(" ")[1];
-
+    
+    
     if (!token) return res.status(401).json({ success: false, message: "Please Send token" });
     const user = await decodeJwt(token);
     if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
 
     const { engineerId, projectId, allocationPercentage, startDate, endDate, role } = req.body;
-
+    
     const engineer = await UserModel.findById(engineerId);
-    console.log({ engineer });
 
     if (!engineer || engineer?.role !== "engineer") {
       return res.status(404).json({ message: "Engineer not found" });
