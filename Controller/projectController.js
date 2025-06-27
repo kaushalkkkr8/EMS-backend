@@ -19,12 +19,11 @@ const getAllProjects = async (req, res) => {
 
 const getProjectById = async (req, res) => {
   try {
- const token = req?.headers?.authorization?.split(" ")[1];
+    const token = req?.headers?.authorization?.split(" ")[1];
 
     if (!token) return res.status(401).json({ success: false, message: "Please Send token" });
     const user = await decodeJwt(token);
     if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
-
 
     const project = await ProjectModel.findById(req.params.id).populate("managerId", "name email");
 
@@ -39,21 +38,19 @@ const getProjectById = async (req, res) => {
 };
 const getProjectByEngineerId = async (req, res) => {
   try {
- const token = req?.headers?.authorization?.split(" ")[1];
-
+    const token = req?.headers?.authorization?.split(" ")[1];
 
     if (!token) return res.status(401).json({ success: false, message: "Please Send token" });
     const user = await decodeJwt(token);
     if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
-    
-    
-    const project =  await AssignmentModel.find({ engineerId:user?._id }).populate("projectId");
+
+    const project = await AssignmentModel.find({ engineerId: user?._id }).populate("projectId");
 
     if (!project) {
       return res.status(404).json({ success: false, message: "Project not found" });
     }
 
-    res.status(200).json({success:true,project});
+    res.status(200).json({ success: true, project });
   } catch (err) {
     res.status(500).json({ success: false, message: "Internal Server error", err });
   }
@@ -62,16 +59,15 @@ const getProjectByEngineerId = async (req, res) => {
 // POST create a new project
 const createProject = async (req, res) => {
   try {
-  const token = req?.headers?.authorization?.split(" ")[1];
+    const token = req?.headers?.authorization?.split(" ")[1];
 
     if (!token) return res.status(401).json({ success: false, message: "Please Send token" });
     const user = await decodeJwt(token);
     if (!user) return res.status(201).json({ success: false, message: "Invalid Token" });
 
-
     const { name, description, startDate, endDate, requiredSkills, teamSize, status } = req.body;
 
-    const project = new ProjectModel({ name, description, startDate, endDate, requiredSkills, teamSize, status, managerId:user?._id });
+    const project = new ProjectModel({ name, description, startDate, endDate, requiredSkills, teamSize, status, managerId: user?._id });
 
     await project.save();
     res.status(201).json({ success: true, message: "Project created", project });
@@ -92,11 +88,30 @@ const updateProject = async (req, res) => {
     const projectId = req.params.id;
     const updateData = req.body;
 
-    const updatedProject = await ProjectModel.findByIdAndUpdate(
-      projectId,
-      { ...updateData, managerId: user._id },
-      { new: true }
-    );
+    const updatedProject = await ProjectModel.findByIdAndUpdate(projectId, { ...updateData, managerId: user._id }, { new: true });
+
+    if (!updatedProject) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Project updated", project: updatedProject });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Internal Server Error", err });
+  }
+};
+const deleteProject = async (req, res) => {
+  try {
+    const token = req?.headers?.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ success: false, message: "Please send token" });
+
+    const user = await decodeJwt(token);
+    if (!user) return res.status(401).json({ success: false, message: "Invalid token" });
+
+    const projectId = req.params.id;
+
+
+    const updatedProject = await ProjectModel.findByIdAndDelete({_id:projectId})
 
     if (!updatedProject) {
       return res.status(404).json({ success: false, message: "Project not found" });
@@ -114,5 +129,7 @@ module.exports = {
   getProjectById,
   createProject,
   getProjectByEngineerId,
-  updateProject
+  updateProject,
+  deleteProject
+
 };

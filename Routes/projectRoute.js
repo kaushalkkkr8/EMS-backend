@@ -10,6 +10,7 @@ router.post("/",createProjectValidation,  createProject);
 
 router.get("/:id",  getProjectById);
 router.put("/:id",  updateProject);
+router.delete("/:id",  updateProject);
 router.get("/engineer/:engineerId",  getProjectByEngineerId);
 
 module.exports = router;
