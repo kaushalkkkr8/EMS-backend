@@ -11,7 +11,7 @@ const engineer = require("./Routes/engineerRoute");
 const project = require("./Routes/projectRoute");
 const assignment = require("./Routes/assignmentRoutes");
 
-const allowedOrigins = ["http://localhost:5173", "https://ems-frontend-liart.vercel.app"];
+const allowedOrigins = ["http://localhost:5173", "https://ems-frontend-liart.vercel.app","https://event-frontend-2.vercel.app/"];
 
 app.use(
   cors({
